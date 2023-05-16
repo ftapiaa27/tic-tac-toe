@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Mogra&display=swap');
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,9 +7,36 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #E6FFFF;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+h1 {
+  font-family: 'Mogra', cursive;
+  font-size: 4rem;
+  color: #769191;
+}
+
+.square {
+  float: left;
+  background-color: #CCE6E6;
+  color: #9ebfbf;
+  font-size: 2rem;
+  border: none;
+  width: 6rem;
+  height: 6rem;
+  cursor: pointer;
+  border: 1px solid #9ebfbf;
+}
+
+.square:hover {
+  background-color: #deefef;
+
 }
