@@ -2,44 +2,147 @@ import logo from './logo.svg';
 import './App.css';
 import { useState } from 'react';
 
-function Square() {
-  const [value, setValue] = useState(null);
+function Square({value, onSquareClick}) {
+  // const [value, setValue] = useState(null);
 
-  function handleClick() {
-    setValue('X');
-  };
+  // function handleClick() {
+  //   setValue('X');
+  // };
 
   return(
     <button 
       className='square'
-      onClick={handleClick}>
+      onClick={onSquareClick}
+      >
         {value}
     </button>
   );
 }
 
+function Board({xIsNext, squares, onPlay}) { //xIsNext={xIsNext} squares={squares} onPlay={handlePlay}
+  // const [xIsNext, setXIsNext] = useState(true);
+  // const [squares, setSquares] = useState(Array(9).fill(null));
+  const winner = calculateWinner(squares);
 
+  function handleClick(i) {
+    if (squares[i] || winner) {
+      return;
+    }
 
-function Board() {
+    const nextSquares = squares.slice();
+
+    if (xIsNext) {
+      nextSquares[i] = 'X';
+    } else {
+      nextSquares[i] = 'O';
+    }
+
+    // setXIsNext(!xIsNext);
+    // setSquares(nextSquares);
+    onPlay(nextSquares);
+
+  }
+
+  let status = winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`;
+  
   return (
-    <div className='board'>
+    <>
+      <div className='status'>{status}</div>
       <div className='board-row'>
-        <Square />
-        <Square />
-        <Square />
+        <Square value={squares[0]} onSquareClick={() => handleClick(0)}/>
+        <Square value={squares[1]} onSquareClick={() => handleClick(1)}/>
+        <Square value={squares[2]} onSquareClick={() => handleClick(2)}/>
       </div>
       <div className='board-row'>
-        <Square />
-        <Square />
-        <Square />
+        <Square value={squares[3]} onSquareClick={() => handleClick(3)}/>
+        <Square value={squares[4]} onSquareClick={() => handleClick(4)}/>
+        <Square value={squares[5]} onSquareClick={() => handleClick(5)}/>
       </div>
       <div className='board-row'>
-        <Square />
-        <Square />
-        <Square />
+        <Square value={squares[6]} onSquareClick={() => handleClick(6)}/>
+        <Square value={squares[7]} onSquareClick={() => handleClick(7)}/>
+        <Square value={squares[8]} onSquareClick={() => handleClick(8)}/>
+      </div>
+    </>
+  );
+}
+
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+  ];
+
+  for (let i=0; i<lines.length; i++) {
+    const [a, b, c] = lines[i];
+
+    // return !(squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) ?? squares[a];
+
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+  return null;
+}
+
+function Game() {
+  // const [xIsNext, setXIsNext] = useState(true);
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [currentMove, setCurrentMove] = useState(0);
+  const currentSquares = history[currentMove];
+  const xIsNext = currentMove % 2 === 0;
+
+  function handlePlay(nextSquares) {
+    // setHistory([...history, nextSquares]);
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1)
+    // setXIsNext(!xIsNext);
+  }
+
+  function jumpTo(nextMove) {
+    setCurrentMove(nextMove);
+    // setXIsNext(nextMove % 2 === 0);
+  }
+
+  const moves = history.map((squares, move) => {
+    let description = move > 0 ? `Go to move #${move}` : 'Go to game start';
+    return (
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    );
+  });
+
+  return (
+    <div className='game'>
+      <div className='game-board'>
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
+      </div>
+      <div className='game-info'>
+        <div className='status'>Game history</div>
+        <ol>
+          {moves}
+        </ol>
       </div>
     </div>
   );
 }
 
-export default Board;
+export default Game;
+
+// For the current move only, show “You are at move #…” instead of a button.
+
+// Rewrite Board to use two loops to make the squares instead of hardcoding them.
+
+// Add a toggle button that lets you sort the moves in either ascending or descending order.
+
+// When someone wins, highlight the three squares that caused the win (and when no one wins, display a message about the result being a draw).
+
+// Display the location for each move in the format (row, col) in the move history list.
